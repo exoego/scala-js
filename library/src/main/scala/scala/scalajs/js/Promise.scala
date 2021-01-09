@@ -76,10 +76,8 @@ object Promise extends js.Object {
   def race[A](promises: js.Iterable[js.Promise[A]]): js.Promise[A] = js.native
 
   trait Settled[T] extends js.Object {
-    var status: String
-    var value: js.UndefOr[T] = js.undefined
-    var reason: js.UndefOr[String] = js.undefined
+    val status: String
+    val value: js.UndefOr[T]
+    val reason: js.UndefOr[scala.Any]
   }
 }
-
-
