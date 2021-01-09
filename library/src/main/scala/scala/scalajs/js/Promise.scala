@@ -69,5 +69,17 @@ object Promise extends js.Object {
 
   def all[A](promises: js.Iterable[js.Promise[A]]): js.Promise[js.Array[A]] = js.native
 
+  def allSettled[A](promises: js.Iterable[js.Promise[A]]): js.Promise[js.Array[Settled[A]]] = js.native
+
+  def any[A](promises: js.Iterable[js.Promise[A]]): js.Promise[A] = js.native
+
   def race[A](promises: js.Iterable[js.Promise[A]]): js.Promise[A] = js.native
+
+  trait Settled[T] extends js.Object {
+    var status: String
+    var value: js.UndefOr[T] = js.undefined
+    var reason: js.UndefOr[String] = js.undefined
+  }
 }
+
+
