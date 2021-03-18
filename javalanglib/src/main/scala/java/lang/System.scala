@@ -284,16 +284,32 @@ object System {
 
   // Environment variables ----------------------------------------------------
 
-  @inline
-  def getenv(): ju.Map[String, String] =
-    ju.Collections.emptyMap()
+  def getenv(): ju.Map[String, String] = {
+    import Utils.DynamicImplicits.truthValue
+
+    if (global.process && global.process.env) {
+      val map = new ju.HashMap[String,String]()
+      val jsProcessEnv = global.process.env.asInstanceOf[js.Object]
+      val copyToMap: js.Function1[js.Tuple2[String, scala.Any], Unit] = { pair =>
+        map.put(pair._1, pair._2.asInstanceOf[String])
+      }
+      js.Object.entries(jsProcessEnv).asInstanceOf[js.Dynamic].forEach(copyToMap)
+      ju.Collections.unmodifiableMap(map)
+    } else {
+      ju.Collections.emptyMap()
+    }
+  }
 
   @inline
   def getenv(name: String): String = {
+    import Utils.DynamicImplicits.truthValue
+
     if (name eq null)
       throw new NullPointerException
-
-    null
+    else if (global.process && global.process.env && js.typeOf(global.process.env.selectDynamic(name)) == "string")
+      global.process.env.selectDynamic(name).asInstanceOf[String]
+    else
+      null
   }
 
   // Runtime ------------------------------------------------------------------

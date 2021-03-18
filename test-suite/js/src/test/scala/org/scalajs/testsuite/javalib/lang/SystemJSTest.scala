@@ -201,4 +201,19 @@ class SystemJSTest {
     assertEquals("\n", get("line.separator"))
     assertEquals(linkingInfo.linkerVersion, get("java.vm.version"))
   }
+
+  @Test def getenv(): Unit = {
+    assumeTrue("Assuming execution in Node.js", Platform.executingInNodeJS)
+    assumeTrue(java.lang.System.getenv().size() > 0)
+  }
+
+  @Test def getenvByName(): Unit = {
+    assumeTrue("Assuming execution in Node.js", Platform.executingInNodeJS)
+
+    def get(key: String): String = java.lang.System.getenv(key)
+
+    assertNotNull(get("PATH"))
+    assertNotNull(get("PWD"))
+    assertNull(get("__SCALA_JS_TEST_NO_SUCH_ENV__"))
+  }
 }
